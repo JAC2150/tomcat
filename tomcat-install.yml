@@ -1,0 +1,31 @@
+---
+- hosts: jenkins
+  become: yes
+  tasks:
+  - name: Update
+    apt:
+      upgrade: yes
+      update_cache: yes
+  - name: Install Java
+    package: 
+      name: default-jre
+      state: present
+  - name: Install Tomcat
+    get_url: 
+      url: http://mirror.jax.hugeserver.com/apache/tomcat/tomcat-7/v7.0.88/bin/apache-tomcat-7.0.88.tar.gz
+      dest: /root
+      mode: 0440
+  - name: Untar Tomcat
+    unarchive:
+      src: /root/apache-tomcat-7.0.88.tar.gz
+      dest: /etc
+      copy: no
+  - name: Deploy Jenkins
+    shell: aws s3 cp s3://agape-ops/artifacts/jenkins.war  /etc/apache-tomcat-7.0.88/webapps
+    #args:
+     # executable: /bin/bash
+  - name : Start Jenkins
+    shell: sh /etc/apache-tomcat-7.0.88/bin/startup.sh
+    args:
+      executable: /bin/bash
+      

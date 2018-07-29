@@ -1,0 +1,9 @@
+---
+- hosts: tomcat
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: start
+    command: sh /etc/apache-tomcat-9.0.10/bin/startup.sh
+    become: true
+    become_user: root
